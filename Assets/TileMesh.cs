@@ -59,8 +59,8 @@ public class TileMesh : MonoBehaviour {
 		fftwf.execute(_fftPlan);
 		Marshal.Copy(_fftBufOut, _height, 0, _height.Length);
 
-		_mesh.vertices = UpdateVerties(_mesh.vertices, _height, N);
-		_mesh.RecalculateNormals();
+		Scale(_height, 1f / Mathf.Sqrt(N * N));
+		UpdateMesh(_mesh, _height, N, length);
 	}
 
 	Texture2D MakeFresnelLookUp()
@@ -130,40 +130,46 @@ public class TileMesh : MonoBehaviour {
 		return m;
 	}
 
-	static Vector3[] UpdateVerties(Vector3[] vertices, float[] _height, int N) {
+	static Mesh UpdateMesh(Mesh mesh, float[] height, int N, float length) {
+		Vector3[] vertices = mesh.vertices;
 		var nPlus1 = N + 1;
-		var amp = 1f / Mathf.Sqrt(N * N);
 		for (var y = 0; y < N; y++) {
 			for (var x = 0; x < N; x++) {
 				var hindex = y * N + x;
 				var vindex = y * nPlus1 + x;
 				
-				var h = amp * _height[2 * hindex];
 				var v = vertices[vindex];
-				v.y = h;
+				v.y = height[2 * hindex];
 				vertices[vindex] = v;
 			}
 			{
 				var hindex = y * N;
 				var vindex = y * nPlus1 + N;
 				var v = vertices[vindex];
-				var h = amp * _height[2 * hindex];
-				v.y = h;
+				v.y = height[2 * hindex];
 				vertices[vindex] = v;
 			}
 		}
 		for (var x = 0; x < N; x++) {
 			var vindex = N * nPlus1 + x;
 			var v = vertices[vindex];
-			v.y = amp * _height[2 * x];
+			v.y = height[2 * x];
 			vertices[vindex] = v;
 		}
 		{
 			var v = vertices[nPlus1 * nPlus1 - 1];
-			var h = amp * _height[2 * N];
-			v.y = h;
+			v.y = height[2 * N];
 			vertices[nPlus1 * nPlus1 - 1] = v;
 		}
-		return vertices;
+		mesh.vertices = vertices;
+
+		mesh.normals = SobelFilter.Normal(mesh.normals, height, N, length);
+		
+		return mesh;
+	}
+	static float[] Scale(float[] height, float amp) {
+		for (var i = 0; i < height.Length; i++)
+			height[i] *= amp;
+		return height;
 	}
 }
