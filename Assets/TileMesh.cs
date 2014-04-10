@@ -158,7 +158,7 @@ public class TileMesh : MonoBehaviour {
 		}
 		{
 			var v = vertices[nPlus1 * nPlus1 - 1];
-			v.y = height[2 * N];
+			v.y = height[0];
 			vertices[nPlus1 * nPlus1 - 1] = v;
 		}
 		mesh.vertices = vertices;
