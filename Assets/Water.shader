@@ -38,7 +38,8 @@
 		
 			//o.Albedo = (1.0 - fresnel) * _SeaColor;
 			//o.Emission = skyColor * fresnel;
-			o.Albedo = lerp(_SeaColor, skyColor, fresnel);
+			//o.Albedo = lerp(_SeaColor, skyColor, fresnel);
+			o.Emission = lerp(_SeaColor, skyColor, fresnel);
 			o.Alpha = 1.0;
 		}
 		ENDCG
