@@ -21,6 +21,8 @@ public class TileMesh : MonoBehaviour {
 	private System.IntPtr _fftPlan;
 	private GameObject[] _tiles;
 
+	public Mesh Ocean { get { return _mesh; } }
+
 	void Start () {
 		_hspec = new HeightSpectrum(N, length, wind, amplitude);
 		_height = new float[2 * N * N];
