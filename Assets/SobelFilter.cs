@@ -13,7 +13,12 @@ public class SobelFilter {
 			for (var x = 0; x < nPlus1; x++) {
 				var nindex = y * nPlus1 + x;
 				var s = SobelModulo(x, y, N, heights);
-				normals[nindex] = new Vector3(-s.x * invDx, 1f, -s.y * invDx).normalized;
+				var n = normals[nindex];
+				n.x = -s.x * invDx;
+				n.y = 1f;
+				n.z = -s.y * invDx;
+				n.Normalize();
+				normals[nindex] = n;
 			}
 		}
 		return normals;
