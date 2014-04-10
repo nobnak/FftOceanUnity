@@ -10,12 +10,10 @@ public class SpectrumView : MonoBehaviour {
 	public float amplitude;
 
 	private HeightSpectrum _spec;
-	private float[] _spectrumShift;
 	private Texture2D _tex;
 
 	void Start() {
 		_spec = new HeightSpectrum(N, length, wind, amplitude);
-		_spectrumShift = new float[2 * N * N];
 
 		renderer.sharedMaterial.mainTexture = _tex = new Texture2D(N, N, TextureFormat.RGB24, false);
 		_tex.filterMode = FilterMode.Point;
@@ -23,9 +21,8 @@ public class SpectrumView : MonoBehaviour {
 	}
 
 	void Update() {
-		var spectrum = _spec.Spectrum(Time.timeSinceLevelLoad);
-		HeightSpectrum.ShiftComplex(spectrum, _spectrumShift, N);
-		var s = _spectrumShift;
+		var spectrum = _spec.SpectrumShift(Time.timeSinceLevelLoad);
+		var s = spectrum;
 
 		var colors = _tex.GetPixels();
 		for (var i = 0; i < colors.Length; i++) {

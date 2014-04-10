@@ -51,6 +51,19 @@ public class HeightSpectrum {
 		}
 		return _spectrum;
 	}
+
+	public float[] SpectrumShift(float t) {
+		var N2 = _N / 2;
+		for (var m = 0; m < _N; m++) {
+			for (var n = 0; n < _N; n++) {
+				var index = ((m + N2) % _N) * _N + (n + N2) % _N;
+				var s = Spectrum(n, m, t);
+				_spectrum[2 * index] = s.x;
+				_spectrum[2 * index + 1] = s.y;
+			}
+		}
+		return _spectrum;
+	}
 	
 	public Vector2 Spectrum(int n, int m, float t) {
 		var index = m * _N + n;
