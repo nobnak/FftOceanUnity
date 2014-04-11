@@ -114,6 +114,7 @@ public class TileMesh : MonoBehaviour {
 			}
 		}
 		m.vertices = vertices;
+		m.uv = new Vector2[vertices.Length];
 		var triangles = new int[6 * N * N];
 		var counter = 0;
 		for (var y = 0; y < N; y++) {
