@@ -1,8 +1,8 @@
 ﻿Shader "Custom/Water" {
 	Properties {
-		_FresnelLookUp ("Fresnel", 2D) = "white" {}
-		_SeaColor ("Sea Color", Color) = (1, 1, 1, 1)
 		_SkyBox("SkyBox", CUBE) = "" {}
+		_Fresnel0 ("Fresnel 0", Float) = 0.02
+		_SeaColor ("Sea Color", Color) = (1, 1, 1, 1)
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -12,9 +12,9 @@
 		#pragma surface surf Lambert
 
 		sampler2D _MainTex;
-		sampler2D _FresnelLookUp;
-		float4 _SeaColor;
 		samplerCUBE _SkyBox;
+		float _Fresnel0;
+		float4 _SeaColor;
 		
 		struct Input {
 			float2 uv_MainTex;
@@ -24,8 +24,8 @@
 		};
 				
 		float Fresnel(float3 V, float3 N) {
-			float costhetai = abs(dot(V, N));
-			return tex2D(_FresnelLookUp, float2(costhetai, 0.0)).a;
+			float c = 1.0 - abs(dot(V, N));
+			return _Fresnel0 + (1.0 - _Fresnel0) * c * c * c * c * c;
 		}
 
 		void surf (Input IN, inout SurfaceOutput o) {
@@ -34,7 +34,7 @@
 		
 			float fresnel = Fresnel(V, N);
 			
-			float3 skyColor = texCUBE(_SkyBox, WorldReflectionVector(IN, N)*float3(1,1,1)).rgb;
+			float3 skyColor = texCUBE(_SkyBox, WorldReflectionVector(IN, N)).rgb;
 		
 			//o.Albedo = (1.0 - fresnel) * _SeaColor;
 			//o.Emission = skyColor * fresnel;

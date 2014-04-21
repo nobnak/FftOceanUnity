@@ -30,9 +30,6 @@ public class TileMesh : MonoBehaviour {
 		_fftBufOut = fftwf.malloc(8 * N * N);
 		_fftPlan = fftwf.dft_2d(N, N, _fftBufIn, _fftBufOut, fftw_direction.Backward, fftw_flags.Estimate);
 
-		var fresnelTex = MakeFresnelLookUp();
-		tileMat.SetTexture("_FresnelLookUp", fresnelTex);
-
 		_mesh = MakeMesh(N, length);
 		_tiles = new GameObject[nxTile * nyTile];
 		var centerOffset = new Vector3(-0.5f * nxTile * length, 0f, -0.5f * nyTile * length);
@@ -63,42 +60,6 @@ public class TileMesh : MonoBehaviour {
 
 		Scale(_height, 1f / Mathf.Sqrt(N * N));
 		UpdateMesh(_mesh, _height, N, length);
-	}
-
-	Texture2D MakeFresnelLookUp()
-	{
-		float nSnell = 1.34f; //Refractive index of water
-		
-		var fresnelTex = new Texture2D(512, 1, TextureFormat.Alpha8, false);
-		fresnelTex.filterMode = FilterMode.Bilinear;
-		fresnelTex.wrapMode = TextureWrapMode.Clamp;
-		fresnelTex.anisoLevel = 0;
-		
-		for(int x = 0; x < 512; x++)
-		{
-			float fresnel = 0.0f;
-			float costhetai = (float)x/511.0f;
-			float thetai = Mathf.Acos(costhetai);
-			float sinthetat = Mathf.Sin(thetai)/nSnell;
-			float thetat = Mathf.Asin(sinthetat);
-			
-			if(thetai == 0.0f)
-			{
-				fresnel = (nSnell - 1.0f)/(nSnell + 1.0f);
-				fresnel = fresnel * fresnel;
-			}
-			else
-			{
-				float fs = Mathf.Sin(thetat - thetai) / Mathf.Sin(thetat + thetai);
-				float ts = Mathf.Tan(thetat - thetai) / Mathf.Tan(thetat + thetai);
-				fresnel = 0.5f * ( fs*fs + ts*ts );
-			}
-			
-			fresnelTex.SetPixel(x, 0, new Color(fresnel,fresnel,fresnel,fresnel));
-		}
-		
-		fresnelTex.Apply();
-		return fresnelTex;
 	}
 
 	static Mesh MakeMesh(int N, float length) {
