@@ -35,10 +35,7 @@
 			float fresnel = Fresnel(V, N);
 			
 			float3 skyColor = texCUBE(_SkyBox, WorldReflectionVector(IN, N)).rgb;
-		
-			//o.Albedo = (1.0 - fresnel) * _SeaColor;
-			//o.Emission = skyColor * fresnel;
-			//o.Albedo = lerp(_SeaColor, skyColor, fresnel);
+			
 			o.Emission = lerp(_SeaColor, skyColor, fresnel);
 			o.Alpha = 1.0;
 		}
