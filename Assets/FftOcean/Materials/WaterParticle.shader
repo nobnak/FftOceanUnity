@@ -5,7 +5,7 @@
 	}
 	SubShader {
 		Tags { "RenderType"="Transparent" "Queue"="Transparent" "IgnoreProjector"="True" }
-		LOD 200
+		LOD 200 Cull Off
 		
 		CGPROGRAM
 		#pragma surface surf Lambert alpha
@@ -17,12 +17,12 @@
 		struct Input {
 			float2 uv_MainTex;
 			float3 worldNormal;
-			float3 worldPos;			
+			float3 worldPos;
 			float3 worldRefl;
 		};
 		
 		inline float F(float3 v, float3 n) {
-			float c = 1.0 - max(0.0, dot(v, n));
+			float c = 1.0 - abs(dot(v, n));
 			return _Fresnel0 + (1.0 - _Fresnel0) * c * c * c * c * c;
 		}
 
