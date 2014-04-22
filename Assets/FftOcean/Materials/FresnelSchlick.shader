@@ -1,6 +1,7 @@
 ﻿Shader "Custom/FresnelSchlick" {
 	Properties {
 		_Color ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+		_SpecColor ("Specular Color", Color) = (0.5, 0.5, 0.5, 1)
 		_Shininess ("Shininess", Float) = 1
 		_Fresnel ("Fresnel", Float) = 0.02
 	}
@@ -32,7 +33,7 @@
 			float nh = saturate(dot(s.Normal, h));
 			float fresnel = FresnelSchlick(lightDir, h);
 			float3 diffuse = (1.0 - fresnel) * s.Albedo;
-			float3 specular = fresnel * ((_Shininess + 2.0) / 8.0) * pow(nh, _Shininess);
+			float3 specular = fresnel * ((_Shininess + 2.0) / 8.0) * pow(nh, _Shininess) * _SpecColor.rgb;
 			
 			float4 c;
 			c.rgb = (diffuse + specular) * nl * _LightColor0.rgb * (atten * 2);
