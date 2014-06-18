@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class OceanUtil {
+	public const float TWO_PI = 2f * Mathf.PI;
+	public const float GRAVITY = 9.81f;
 
 	public static float PhillipsSpectrum(Vector2 k, float windSpeed, Vector2 windDirection) {
 		var k2mag = k.sqrMagnitude;
@@ -10,7 +12,7 @@ public class OceanUtil {
 		
 		var k4mag = k2mag * k2mag;
 		var k6mag = k4mag * k2mag;
-		var L = windSpeed * windSpeed / Physics.gravity;
+		var L = windSpeed * windSpeed / GRAVITY;
 		var kDotW = Vector2.Dot(k, windDirection);
 		var kDotW2 = kDotW * kDotW * kDotW * kDotW * kDotW * kDotW / k6mag;
 		
