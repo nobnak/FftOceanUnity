@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class H0 {
+	public int N { get; private set; }
 	public Phillips P { get; private set; }
 
 	private Vector2[,] _h0;
@@ -26,16 +27,16 @@ public class H0 {
 	}
 
 	private void init() {
-		var n = P.K.N;
+		N = P.N;
 
-		_h0 = new Vector2[n, n];
-		for (var y = 0; y < n; y++)
-			for (var x = 0; x < n; x++)
+		_h0 = new Vector2[N, N];
+		for (var y = 0; y < N; y++)
+			for (var x = 0; x < N; x++)
 				_h0[x, y] = calc(x, y);
 
-		_h0Conj = new Vector2[n, n];
-		for (var y = 0; y < n; y++)
-			for (var x = 0; x < n; x++)
-				_h0Conj[x, y] = _h0[(-x + n) % n, (-y + n) % n];
+		_h0Conj = new Vector2[N, N];
+		for (var y = 0; y < N; y++)
+			for (var x = 0; x < N; x++)
+				_h0Conj[x, y] = _h0[(-x + N) % N, (-y + N) % N];
 	}
 }

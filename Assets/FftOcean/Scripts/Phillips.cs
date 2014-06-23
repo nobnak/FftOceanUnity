@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class Phillips {
+	public int N { get; private set; }
 	public K K { get; private set; }
 
 	public float WindSpeed { get; private set; }
@@ -38,10 +39,10 @@ public class Phillips {
 	}
 
 	private void init() {
-		var n = K.N;
-		_p = new float[n, n];
-		for (var y = 0; y < n; y++)
-			for (var x = 0; x < n; x++)
+		N = K.N;
+		_p = new float[N, N];
+		for (var y = 0; y < N; y++)
+			for (var x = 0; x < N; x++)
 				_p[x, y] = calc(x, y);
 	}
 

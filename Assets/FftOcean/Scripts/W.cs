@@ -5,6 +5,7 @@ public class W {
 	public const float T = 100f;
 	public const float W0 = OceanUtil.TWO_PI / T;
 
+	public int N { get; private set; }
 	public K K { get; private set; }
 
 	private float[,] _w;
@@ -23,10 +24,10 @@ public class W {
 	}
 
 	private void init() {
-		var n = K.N;
-		_w = new float[n, n];
-		for (var y = 0; y < n; y++)
-			for (var x = 0; x < n; x++)
+		N = K.N;
+		_w = new float[N, N];
+		for (var y = 0; y < N; y++)
+			for (var x = 0; x < N; x++)
 				_w[x, y] = calc(x, y);
 	}
 
