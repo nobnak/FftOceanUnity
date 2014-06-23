@@ -6,18 +6,21 @@ public class H {
 	public H0 H0 { get; private set; }
 	public W W { get; private set; }
 
-	private Vector2[,] _h;
+	private float[] _h;
 
 	public H(H0 H0, W W) {
 		this.H0 = H0;
 		this.W = W;
 
 		N = H0.N;
-		this._h = new Vector2[N, N];
+		this._h = new float[2 * N * N];
 	}
 
 	public Vector2 this[int n, int m] {
-		get { return _h[n, m]; }
+		get { 
+			var i = 2 * (n + m * N);
+			return new Vector2(_h[i], _h[i + 1]); 
+		}
 	}
 
 	public void Jump(float t) {
@@ -29,9 +32,9 @@ public class H {
 				var hp = H0[x, y];
 				var hm = H0.ConjMinusK(x, y);
 
-				_h[x, y] = new Vector2(
-					(hp.x + hm.x) * c + (hm.y - hp.y) * s,
-					(hp.y + hm.y) * c + (hp.x - hm.x) * s);
+				var i = 2 * (x + y * N);
+				_h[i] = (hp.x + hm.x) * c + (hm.y - hp.y) * s;
+				_h[i + 1] = (hp.y + hm.y) * c + (hp.x - hm.x) * s;
 			}
 		}
 	}
