@@ -16,6 +16,10 @@ public class H {
 		this._h = new Vector2[N, N];
 	}
 
+	public Vector2 this[int n, int m] {
+		get { return _h[n, m]; }
+	}
+
 	public void Jump(float t) {
 		for (var y = 0; y < N; y++) {
 			for (var x = 0; x < N; x++) {
