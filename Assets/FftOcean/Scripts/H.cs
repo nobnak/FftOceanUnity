@@ -23,6 +23,8 @@ public class H {
 		}
 	}
 
+	public float[] Current { get { return _h; } }
+
 	public void Jump(float t) {
 		for (var y = 0; y < N; y++) {
 			for (var x = 0; x < N; x++) {

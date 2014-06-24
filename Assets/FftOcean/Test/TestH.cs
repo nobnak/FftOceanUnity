@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using FFTWSharp;
+using System.Runtime.InteropServices;
 
 public class TestH : MonoBehaviour {
 	public int n = 32;
@@ -16,6 +18,10 @@ public class TestH : MonoBehaviour {
 	private W _w;
 	private H _h;
 
+	private ComplexArray _fftIn, _fftOut;
+	private fftwf_plan _fftPlan;
+	private float[] _heightField;
+
 	// Use this for initialization
 	void Start () {
 		_tex = new Texture2D(n, n, TextureFormat.RGB24, false);
@@ -28,20 +34,38 @@ public class TestH : MonoBehaviour {
 		_w = new W(_k);
 		_h = new H(_h0, _w);
 
+		_fftIn = new ComplexArray(_h.Current);
+		_fftOut = new ComplexArray(_h.Current);
+		_fftPlan = fftwf_plan.dft_2d(n, n, _fftIn, _fftOut, fftw_direction.Backward, fftw_flags.Estimate);
+		_heightField = new float[_h.Current.Length];
 	}
 
 	void Update() {
 		_h.Jump(Time.timeSinceLevelLoad);
+		_fftIn.SetData(_h.Current);
+		_fftPlan.Execute();
+		_fftOut.GetData(_heightField);
 
 		var colors = _tex.GetPixels();
+		var fftScale = 1f / Mathf.Sqrt(n);
 		for (var y = 0; y < n; y++) {
 			for (var x = 0; x < n; x++) {
 				var i = x + y * n;
-				var h = _h[x, y];
-				colors[i] = new Color(colorGain * h.x + 0.5f, colorGain * h.y + 0.5f, 0f);
+				var hx = _heightField[2 * i];
+				var height = fftScale * colorGain * hx + 0.5f;
+				colors[i] = new Color(height, height, height);
 			}
 		}
 		_tex.SetPixels(colors);
 		_tex.Apply();
+	}
+
+	public class ComplexArray : fftwf_complexarray {
+
+		public ComplexArray(float[] data) : base(data) {}
+
+		public void GetData(float[] data) {
+			Marshal.Copy(Handle, data, 0, data.Length);
+		}
 	}
 }
