@@ -27,6 +27,7 @@ public class TestH : MonoBehaviour {
 		_h0 = new H0(_phillips);
 		_w = new W(_k);
 		_h = new H(_h0, _w);
+
 	}
 
 	void Update() {

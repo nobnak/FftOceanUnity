@@ -5,7 +5,7 @@ public class H0 {
 	public int N { get; private set; }
 	public Phillips P { get; private set; }
 
-	private Vector2[,] _h0;
+	private Vector2[,] _h0; 
 	private Vector2[,] _h0Conj;
 
 	public H0(Phillips P) {
@@ -35,8 +35,11 @@ public class H0 {
 				_h0[x, y] = calc(x, y);
 
 		_h0Conj = new Vector2[N, N];
-		for (var y = 0; y < N; y++)
-			for (var x = 0; x < N; x++)
-				_h0Conj[x, y] = _h0[(-x + N) % N, (-y + N) % N];
+		for (var y = 0; y < N; y++) {
+			for (var x = 0; x < N; x++) {
+				var h = _h0[(-x + N) % N, (-y + N) % N];
+				_h0Conj[x, y] = new Vector2(h.x, -h.y);
+			}
+		}
 	}
 }
