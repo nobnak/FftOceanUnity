@@ -7,7 +7,7 @@ public class TestH : MonoBehaviour {
 	public int n = 32;
 	public float L = 32f;
 	public Vector2 wind = new Vector2(1f, 0f);
-	public float colorGain = 1f;
+	public float heightScale = 0.01f;
 
 	private Texture2D _tex;
 	private Material _mat;
@@ -51,9 +51,8 @@ public class TestH : MonoBehaviour {
 		for (var y = 0; y < n; y++) {
 			for (var x = 0; x < n; x++) {
 				var i = x + y * n;
-				var hx = _heightField[2 * i];
-				var height = fftScale * colorGain * hx + 0.5f;
-				colors[i] = new Color(height, height, height);
+				var hx = fftScale * heightScale * _heightField[2 * i];
+				colors[i] = ColorUtil.EncodeFloatRGBA(hx);
 			}
 		}
 		_tex.SetPixels(colors);

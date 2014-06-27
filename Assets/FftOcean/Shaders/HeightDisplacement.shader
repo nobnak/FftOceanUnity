@@ -19,13 +19,14 @@
 				float4 vertex : POSITION;
 			};
 
-			vs2ps vert (inout appdata_full v) {
-				vs2ps OUT;
+			vs2ps vert (appdata_full v) {
+				vs2ps o;
 				
-				float4 worldPos = mul(UNITY_MATRIX_M, v.vertex);
+				float4 worldPos = mul(_Object2World, v.vertex);
 				
+				o.vertex = mul(UNITY_MATRIX_VP, worldPos);
 				
-				OUT.vertex = mul(UNITY_MATRIX_VP, worldPos);
+				return o;
 	        }
 	        
 	        fixed4 frag(vs2ps IN) : COLOR {
