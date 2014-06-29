@@ -11,4 +11,11 @@ public static class ColorUtil {
 		enc -= new Vector4(enc.y, enc.z, enc.w, enc.w) * kEncodeBit;
 		return enc;
 	}
+
+	public static Color EncodeFloatRGBA2(float v) {
+		float x = 1.0f * v, y = 255.0f * v, z = 65025.0f * v, w = 160581375.0f * v;
+		x -= Mathf.Floor(x); y -= Mathf.Floor(y); z -= Mathf.Floor(z); w -= Mathf.Floor(w);
+		x -= y * kEncodeBit; y -= z * kEncodeBit; z -= w * kEncodeBit; w -= w * kEncodeBit;	
+		return new Color(x, y, z, w);
+	}
 }

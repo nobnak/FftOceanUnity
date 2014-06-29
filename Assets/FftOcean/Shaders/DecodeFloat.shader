@@ -9,21 +9,23 @@
 		
 		Pass {
 			CGPROGRAM
-// Upgrade NOTE: excluded shader from OpenGL ES 2.0 because it does not contain a surface program or both vertex and fragment programs.
-#pragma exclude_renderers gles
 			#pragma vertex vert
-			#pragma fragmanet frag
+			#pragma fragment frag
 			#include "UnityCG.cginc"
 			
 			sampler2D _MainTex;
 			float _Gain;
 			
+			struct appdata {
+				float4 vertex : POSITION;
+				float2 texcoord : TEXCOORD0;
+			};
 			struct vs2ps {
 				float4 vertex : POSITION;
 				float2 texcoord : TEXCOORD0;
 			};
 			
-			vs2ps vert(appdata_full IN) {
+			vs2ps vert(appdata IN) {
 				vs2ps OUT;
 				
 				OUT.vertex = mul(UNITY_MATRIX_MVP, IN.vertex);

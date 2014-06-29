@@ -8,9 +8,9 @@ public class TestH : MonoBehaviour {
 	public float L = 32f;
 	public Vector2 wind = new Vector2(1f, 0f);
 	public float heightScale = 0.01f;
+	public Material mat;
 
 	private Texture2D _tex;
-	private Material _mat;
 
 	private K _k;
 	private Phillips _phillips;
@@ -24,9 +24,10 @@ public class TestH : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		_tex = new Texture2D(n, n, TextureFormat.RGB24, false);
+		_tex = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
 		_tex.filterMode = FilterMode.Point;
-		renderer.sharedMaterial.mainTexture = _tex;
+		mat.mainTexture = _tex;
+		mat.SetFloat("_L", L);
 
 		_k = new K(n, L);
 		_phillips = new Phillips(_k, wind.magnitude, wind.normalized);
@@ -52,7 +53,8 @@ public class TestH : MonoBehaviour {
 			for (var x = 0; x < n; x++) {
 				var i = x + y * n;
 				var hx = fftScale * heightScale * _heightField[2 * i];
-				colors[i] = ColorUtil.EncodeFloatRGBA(hx);
+				hx = Mathf.Clamp(hx + 0.5f, 0f, 0.999f);
+				colors[i] = ColorUtil.EncodeFloatRGBA2(hx);
 			}
 		}
 		_tex.SetPixels(colors);
