@@ -14,7 +14,7 @@ public static class ColorUtil {
 
 	public static Color EncodeFloatRGBA2(float v) {
 		float x = 1.0f * v, y = 255.0f * v, z = 65025.0f * v, w = 160581375.0f * v;
-		x -= Mathf.Floor(x); y -= Mathf.Floor(y); z -= Mathf.Floor(z); w -= Mathf.Floor(w);
+		x -= (int)x; y -= (int)y; z -= (int)z; w -= (int)w;
 		x -= y * kEncodeBit; y -= z * kEncodeBit; z -= w * kEncodeBit; w -= w * kEncodeBit;	
 		return new Color(x, y, z, w);
 	}

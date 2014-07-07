@@ -1,7 +1,6 @@
 ﻿Shader "Custom/DecodeFloat" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_Gain ("Gain", Float) = 1.0
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -14,7 +13,8 @@
 			#include "UnityCG.cginc"
 			
 			sampler2D _MainTex;
-			float _Gain;
+			float _L;
+			float _Scale = 1.0;
 			
 			struct appdata {
 				float4 vertex : POSITION;
@@ -37,7 +37,7 @@
 			fixed4 frag(vs2ps IN) : COLOR {
 				float4 c = tex2D(_MainTex, IN.texcoord);
 				float v = DecodeFloatRGBA(c);
-				return _Gain * v;
+				return v;
 			}			
 			ENDCG
 		}

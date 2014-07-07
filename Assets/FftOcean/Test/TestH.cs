@@ -11,6 +11,7 @@ public class TestH : MonoBehaviour {
 	public Material mat;
 
 	private Texture2D _tex;
+	private Color[] _colors;
 
 	private K _k;
 	private Phillips _phillips;
@@ -21,13 +22,16 @@ public class TestH : MonoBehaviour {
 	private ComplexArray _fftIn, _fftOut;
 	private fftwf_plan _fftPlan;
 	private float[] _heightField;
+	private float[] _heights;
+	private float _maxHeight, _prevMaxHeight = 0f;
 
 	// Use this for initialization
 	void Start () {
 		_tex = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
-		_tex.filterMode = FilterMode.Point;
 		mat.mainTexture = _tex;
 		mat.SetFloat("_L", L);
+		_colors = _tex.GetPixels();
+		_heights = new float[_colors.Length];
 
 		_k = new K(n, L);
 		_phillips = new Phillips(_k, wind.magnitude, wind.normalized);
@@ -47,17 +51,29 @@ public class TestH : MonoBehaviour {
 		_fftPlan.Execute();
 		_fftOut.GetData(_heightField);
 
-		var colors = _tex.GetPixels();
 		var fftScale = 1f / Mathf.Sqrt(n);
 		for (var y = 0; y < n; y++) {
 			for (var x = 0; x < n; x++) {
 				var i = x + y * n;
 				var hx = fftScale * heightScale * _heightField[2 * i];
-				hx = Mathf.Clamp(hx + 0.5f, 0f, 0.999f);
-				colors[i] = ColorUtil.EncodeFloatRGBA2(hx);
+				_heights[i] = hx;
+				if (hx > _maxHeight)
+					_maxHeight = hx;
+				else if (-hx > _maxHeight)
+					_maxHeight = -hx;
 			}
 		}
-		_tex.SetPixels(colors);
+		var scale = 2.02f * _maxHeight;
+		var scaleInv = 1f / scale;
+		for (var y = 0; y < n; y++) {
+			for (var x = 0; x < n; x++) {
+				var i = x + y * n;
+				var hx = _heights[i] * scaleInv + 0.5f;
+				_colors[i] = ColorUtil.EncodeFloatRGBA2(hx);
+			}
+		}
+		mat.SetFloat("_Scale", scale);
+		_tex.SetPixels(_colors);
 		_tex.Apply();
 	}
 
