@@ -10,6 +10,9 @@ public class D {
 	private float[] _Dx;
 	private float[] _Dy;
 
+	public float[] Dx { get { return _Dx; } }
+	public float[] Dy { get { return _Dy; } }
+
 	public D(int N, K k, H h) {
 		this.N = N;
 		this.K = k;

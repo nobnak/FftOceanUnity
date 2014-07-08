@@ -8,6 +8,8 @@ public class TestH : MonoBehaviour {
 	public float L = 32f;
 	public Vector2 wind = new Vector2(1f, 0f);
 	public float heightScale = 0.01f;
+	public float lambda = 0.01f;
+
 	public Material mat;
 
 	private Texture2D _tex;
@@ -18,6 +20,7 @@ public class TestH : MonoBehaviour {
 	private H0 _h0;
 	private W _w;
 	private H _h;
+	private D _d;
 
 	private ComplexArray _fftIn, _fftOut;
 	private fftwf_plan _fftPlan;
@@ -38,6 +41,7 @@ public class TestH : MonoBehaviour {
 		_h0 = new H0(_phillips);
 		_w = new W(_k);
 		_h = new H(_h0, _w);
+		_d = new D(n, _k, _h);
 
 		_fftIn = new ComplexArray(_h.Current);
 		_fftOut = new ComplexArray(_h.Current);
