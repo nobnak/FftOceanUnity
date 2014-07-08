@@ -6,6 +6,7 @@ public class H {
 	public H0 H0 { get; private set; }
 	public W W { get; private set; }
 
+	private float _t;
 	private float[] _h;
 
 	public H(H0 H0, W W) {
@@ -14,10 +15,11 @@ public class H {
 
 		N = H0.N;
 		this._h = new float[2 * N * N];
+		_Jump(0f);
 	}
 
 	public Vector2 this[int n, int m] {
-		get { 
+		get {
 			var i = 2 * (n + m * N);
 			return new Vector2(_h[i], _h[i + 1]); 
 		}
@@ -26,6 +28,13 @@ public class H {
 	public float[] Current { get { return _h; } }
 
 	public void Jump(float t) {
+		if (t == _t)
+			return;
+		_Jump(t);
+	}
+
+	private void _Jump(float t) {
+		_t = t;
 		for (var y = 0; y < N; y++) {
 			for (var x = 0; x < N; x++) {
 				var theta = W[x, y] * t;
