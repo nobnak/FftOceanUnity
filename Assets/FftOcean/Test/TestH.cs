@@ -10,7 +10,7 @@ public class TestH : MonoBehaviour {
 	public float heightScale = 0.01f;
 	public float lambda = 0.01f;
 
-	public Material matU, matV, matW;
+	public Material mat;
 
 	private K _k;
 	private Phillips _phillips;
@@ -26,15 +26,16 @@ public class TestH : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		matU.mainTexture = _texPu = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
-		matV.mainTexture = _texPv = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
-		matW.mainTexture = _texPw = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
-		matU.SetFloat("_L", L);
-		matV.SetFloat("_L", L);
-		matW.SetFloat("_L", L);
+		_texPu = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
+		_texPv = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
+		_texPw = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
 		_cPu = _texPu.GetPixels();
 		_cPv = _texPv.GetPixels();
 		_cPw = _texPw.GetPixels();
+		mat.SetFloat("_L", L);
+		mat.SetTexture("_XTex", _texPu);
+		mat.SetTexture("_YTex", _texPv);
+		mat.SetTexture("_ZTex", _texPw);
 
 		_k = new K(n, L);
 		_phillips = new Phillips(_k, wind.magnitude, wind.normalized);
@@ -79,9 +80,9 @@ public class TestH : MonoBehaviour {
 		_texPv.Apply();
 		_texPw.Apply();
 
-		matU.SetFloat("_Scale", scalePu);
-		matV.SetFloat("_Scale", scalePv);
-		matW.SetFloat("_Scale", scalePw);
+		mat.SetFloat("_ScaleX", scalePu);
+		mat.SetFloat("_ScaleY", scalePv);
+		mat.SetFloat("_ScaleZ", scalePw);
 	}
 
 	public class ComplexArray : fftwf_complexarray {
