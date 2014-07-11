@@ -5,7 +5,7 @@ public class SurfaceFiller : MonoBehaviour {
 	public Mesh mesh;
 	public Material mat;
 	public int n = 8;
-	public float size = 10f;
+	public float L = 32f;
 
 	void Start () {
 		for (var y = 0; y < n; y++) {
@@ -15,8 +15,8 @@ public class SurfaceFiller : MonoBehaviour {
 				var mr = go.AddComponent<MeshRenderer>();
 
 				go.transform.parent = transform;
-				go.transform.localPosition = new Vector3(size * x, 0f, size * y);
-				go.transform.localScale = new Vector3(size, 1f, size);
+				go.transform.localPosition = new Vector3(L * x, 0f, L * y);
+				go.transform.localScale = new Vector3(L, 1f, L);
 				mf.sharedMesh = mesh;
 				mr.sharedMaterial = mat;
 			}

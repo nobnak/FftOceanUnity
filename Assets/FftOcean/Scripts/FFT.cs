@@ -9,7 +9,6 @@ public class FFT {
 	private ComplexArray _fftIn, _fftOut;
 	private fftwf_plan _fftPlan;
 	private float[] _spaceDomain;
-	private float _maxHeight = 0f;
 
 	public FFT(int n) {
 		this.N = n;
@@ -21,7 +20,7 @@ public class FFT {
 		_spaceDomain = new float[2 * size];
 	}
 
-	public void Execute(float[] freqDomain, out float scale, float[] spaceDomain) {
+	public void Execute(float[] freqDomain, ref float maxHeight, out float scale, float[] spaceDomain) {
 		_fftIn.SetData(freqDomain);
 		_fftPlan.Execute();
 		_fftOut.GetData(_spaceDomain);
@@ -32,13 +31,13 @@ public class FFT {
 				var i = x + y * N;
 				var hx = fftScale * _spaceDomain[2 * i];
 				spaceDomain[i] = hx;
-				if (hx > _maxHeight)
-					_maxHeight = hx;
-				else if (-hx > _maxHeight)
-					_maxHeight = -hx;
+				if (hx > maxHeight)
+					maxHeight = hx;
+				else if (-hx > maxHeight)
+					maxHeight = -hx;
 			}
 		}
-		scale = 2.02f * _maxHeight;
+		scale = 2.02f * maxHeight;
 	}
 	
 	public class ComplexArray : fftwf_complexarray {

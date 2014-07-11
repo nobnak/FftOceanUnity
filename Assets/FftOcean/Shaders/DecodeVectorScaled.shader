@@ -1,4 +1,4 @@
-﻿Shader "Custom/DecodeVector" {
+﻿Shader "Custom/DecodeVectorScaled" {
 	Properties {
 		_XTex ("X", 2D) = "white" {}
 		_YTex ("Y", 2D) = "white" {}
@@ -43,8 +43,9 @@
 				float x = DecodeFloatRGBA(tex2D(_XTex, IN.texcoord));
 				float y = DecodeFloatRGBA(tex2D(_YTex, IN.texcoord));
 				float z = DecodeFloatRGBA(tex2D(_ZTex, IN.texcoord));
-				return float4(x, y, z, 1.0);
-			}			
+				float3 xyz = float3(x, y, z);
+				return float4(_Scale * (xyz - 0.5), 1.0);
+			}
 			ENDCG
 		}
 	} 

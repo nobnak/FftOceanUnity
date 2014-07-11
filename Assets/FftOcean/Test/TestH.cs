@@ -7,10 +7,9 @@ public class TestH : MonoBehaviour {
 	public int n = 32;
 	public float L = 32f;
 	public Vector2 wind = new Vector2(1f, 0f);
-	public float heightScale = 0.01f;
-	public float lambda = 0.01f;
 
-	public Material mat;
+	public Material floatDecoderMat;
+	public Material displacementMat;
 
 	private K _k;
 	private Phillips _phillips;
@@ -23,6 +22,8 @@ public class TestH : MonoBehaviour {
 	private Texture2D _texPu, _texPv, _texPw;
 	private Color[] _cPu, _cPv, _cPw;
 	private float[] _pu, _pv, _pw;
+	private float _maxPu = 0f, _maxPv = 0f, _maxPw = 0f;
+	private RenderTexture _texUvw;
 
 	// Use this for initialization
 	void Start () {
@@ -32,10 +33,14 @@ public class TestH : MonoBehaviour {
 		_cPu = _texPu.GetPixels();
 		_cPv = _texPv.GetPixels();
 		_cPw = _texPw.GetPixels();
-		mat.SetFloat("_L", L);
-		mat.SetTexture("_XTex", _texPu);
-		mat.SetTexture("_YTex", _texPv);
-		mat.SetTexture("_ZTex", _texPw);
+		displacementMat.SetFloat("_L", L);
+		floatDecoderMat.SetFloat("_L", L);
+		floatDecoderMat.SetTexture("_XTex", _texPu);
+		floatDecoderMat.SetTexture("_YTex", _texPv);
+		floatDecoderMat.SetTexture("_ZTex", _texPw);
+
+		_texUvw = new RenderTexture(n, n, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+		displacementMat.mainTexture = _texUvw;
 
 		_k = new K(n, L);
 		_phillips = new Phillips(_k, wind.magnitude, wind.normalized);
@@ -54,9 +59,9 @@ public class TestH : MonoBehaviour {
 		_h.Jump(Time.timeSinceLevelLoad);
 		_d.Jump(Time.timeSinceLevelLoad);
 		float scalePu, scalePv, scalePw;
-		_fft.Execute(_d.Dx, out scalePu, _pu);
-		_fft.Execute(_d.Dy, out scalePv, _pv);
-		_fft.Execute(_h.Current, out scalePw, _pw);
+		_fft.Execute(_d.Dx, ref _maxPu, out scalePu, _pu);
+		_fft.Execute(_d.Dy, ref _maxPv, out scalePv, _pv);
+		_fft.Execute(_h.Current, ref _maxPw, out scalePw, _pw);
 
 		var scalePuInv = 1f / scalePu;
 		var scalePvInv = 1f / scalePv;
@@ -80,9 +85,8 @@ public class TestH : MonoBehaviour {
 		_texPv.Apply();
 		_texPw.Apply();
 
-		mat.SetFloat("_ScaleX", scalePu);
-		mat.SetFloat("_ScaleY", scalePv);
-		mat.SetFloat("_ScaleZ", scalePw);
+		floatDecoderMat.SetVector("_Scale", new Vector4(scalePu, scalePv, scalePw, 1.0f));
+		Graphics.Blit(_texPu, _texUvw, floatDecoderMat);
 	}
 
 	public class ComplexArray : fftwf_complexarray {
