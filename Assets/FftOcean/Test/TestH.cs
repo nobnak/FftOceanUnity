@@ -9,6 +9,7 @@ public class TestH : MonoBehaviour {
 	public Vector2 wind = new Vector2(1f, 0f);
 
 	public Material floatDecoderMat;
+	public Material normalGenMat;
 	public Material displacementMat;
 
 	private K _k;
@@ -23,7 +24,7 @@ public class TestH : MonoBehaviour {
 	private Color[] _cPu, _cPv, _cPw;
 	private float[] _pu, _pv, _pw;
 	private float _maxPu = 0f, _maxPv = 0f, _maxPw = 0f;
-	private RenderTexture _texUvw;
+	private RenderTexture _texUvw, _texNormal;
 
 	// Use this for initialization
 	void Start () {
@@ -40,6 +41,7 @@ public class TestH : MonoBehaviour {
 		floatDecoderMat.SetTexture("_ZTex", _texPw);
 
 		_texUvw = new RenderTexture(n, n, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+		_texNormal = new RenderTexture(n, n, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
 		displacementMat.mainTexture = _texUvw;
 
 		_k = new K(n, L);
@@ -87,6 +89,7 @@ public class TestH : MonoBehaviour {
 
 		floatDecoderMat.SetVector("_Scale", new Vector4(scalePu, scalePv, scalePw, 1.0f));
 		Graphics.Blit(_texPu, _texUvw, floatDecoderMat);
+		Graphics.Blit(_texUvw, _texNormal, normalGenMat);
 	}
 
 	public class ComplexArray : fftwf_complexarray {
