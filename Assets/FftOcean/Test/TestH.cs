@@ -9,7 +9,6 @@ public class TestH : MonoBehaviour {
 	public Vector2 wind = new Vector2(1f, 0f);
 
 	public Material floatDecoderMat;
-	public Material normalGenMat;
 	public Material displacementMat;
 
 	private K _k;
@@ -31,10 +30,12 @@ public class TestH : MonoBehaviour {
 		_texEtaX = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
 		_texEtaY = new Texture2D(n, n , TextureFormat.RGBA32, false, true);
 		_cPw = _texPw.GetPixels();
+		_cEtaX = _texEtaX.GetPixels();
+		_cEtaY = _texEtaY.GetPixels();
 		displacementMat.SetFloat("_L", L);
 		floatDecoderMat.SetFloat("_L", L);
-		floatDecoderMat.SetTexture("_XTex", _texPu);
-		floatDecoderMat.SetTexture("_YTex", _texPv);
+		floatDecoderMat.SetTexture("_XTex", _texEtaX);
+		floatDecoderMat.SetTexture("_YTex", _texEtaY);
 		floatDecoderMat.SetTexture("_ZTex", _texPw);
 
 		_texUvw = new RenderTexture(n, n, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
@@ -46,48 +47,46 @@ public class TestH : MonoBehaviour {
 		_h0 = new H0(_phillips);
 		_w = new W(_k);
 		_h = new H(_h0, _w);
-		_d = new D(n, _k, _h);
 		_eta = new Eta(n, _k, _h);
 
 		_fft = new FFT(n);
-		_pu = new float[2 * n * n];
-		_pv = new float[_pu.Length];
-		_pw = new float[_pu.Length];
+		_pw = new float[2 * n * n];
+		_etaX = new float[_pw.Length];
+		_etaY = new float[_pw.Length];
 	}
 
 	void Update() {
 		_h.Jump(Time.timeSinceLevelLoad);
-		_d.Jump(Time.timeSinceLevelLoad);
-		float scalePu, scalePv, scalePw;
-		_fft.Execute(_d.Dx, ref _maxPu, out scalePu, _pu);
-		_fft.Execute(_d.Dy, ref _maxPv, out scalePv, _pv);
+		_eta.Jump(Time.timeSinceLevelLoad);
+		float scaleEtaX, scaleEtaY, scalePw;
+		_fft.Execute(_eta.Ex, ref _maxEtaX, out scaleEtaX, _etaX);
+		_fft.Execute(_eta.Ey, ref _maxEtaY, out scaleEtaY, _etaY);
 		_fft.Execute(_h.Current, ref _maxPw, out scalePw, _pw);
 
-		var scalePuInv = 1f / scalePu;
-		var scalePvInv = 1f / scalePv;
+		var scaleEtaXInv = 1f / scaleEtaX;
+		var scaleEtaYInv = 1f / scaleEtaY;
 		var scalePwInv = 1f / scalePw;
 
 		for (var y = 0; y < n; y++) {
 			for (var x = 0; x < n; x++) {
 				var i = x + y * n;
-				var pu = _pu[i] * scalePuInv + 0.5f;
-				var pv = _pv[i] * scalePvInv + 0.5f;
+				var pEtaX = _etaX[i] * scaleEtaXInv + 0.5f;
+				var pEtaY = _etaY[i] * scaleEtaYInv + 0.5f;
 				var pw = _pw[i] * scalePwInv + 0.5f;
-				_cPu[i] = ColorUtil.EncodeFloatRGBA2(pu);
-				_cPv[i] = ColorUtil.EncodeFloatRGBA2(pv);
+				_cEtaX[i] = ColorUtil.EncodeFloatRGBA2(pEtaX);
+				_cEtaY[i] = ColorUtil.EncodeFloatRGBA2(pEtaY);
 				_cPw[i] = ColorUtil.EncodeFloatRGBA2(pw);
 			}
 		}
-		_texPu.SetPixels(_cPu);
-		_texPv.SetPixels(_cPv);
+		_texEtaX.SetPixels(_cEtaX);
+		_texEtaY.SetPixels(_cEtaY);
 		_texPw.SetPixels(_cPw);
-		_texPu.Apply();
-		_texPv.Apply();
+		_texEtaX.Apply();
+		_texEtaY.Apply();
 		_texPw.Apply();
 
-		floatDecoderMat.SetVector("_Scale", new Vector4(scalePu, scalePv, scalePw, 1.0f));
-		Graphics.Blit(_texPu, _texUvw, floatDecoderMat);
-		Graphics.Blit(_texUvw, _texNormal, normalGenMat);
+		floatDecoderMat.SetVector("_Scale", new Vector4(scaleEtaX, scaleEtaY, scalePw, 1.0f));
+		Graphics.Blit(_texPw, _texUvw, floatDecoderMat);
 	}
 
 	public class ComplexArray : fftwf_complexarray {
