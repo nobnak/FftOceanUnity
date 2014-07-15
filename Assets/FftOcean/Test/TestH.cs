@@ -17,22 +17,19 @@ public class TestH : MonoBehaviour {
 	private H0 _h0;
 	private W _w;
 	private H _h;
-	private D _d;
+	private Eta _eta;
 
 	private FFT _fft;
-	private Texture2D _texPu, _texPv, _texPw;
-	private Color[] _cPu, _cPv, _cPw;
-	private float[] _pu, _pv, _pw;
-	private float _maxPu = 0f, _maxPv = 0f, _maxPw = 0f;
+	private Texture2D _texPw, _texEtaX, _texEtaY;
+	private Color[] _cPw, _cEtaX, _cEtaY;
+	private float[] _pw, _etaX, _etaY;
+	private float _maxPw = 0f, _maxEtaX = 0f, _maxEtaY = 0f;
 	private RenderTexture _texUvw, _texNormal;
 
-	// Use this for initialization
 	void Start () {
-		_texPu = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
-		_texPv = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
 		_texPw = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
-		_cPu = _texPu.GetPixels();
-		_cPv = _texPv.GetPixels();
+		_texEtaX = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
+		_texEtaY = new Texture2D(n, n , TextureFormat.RGBA32, false, true);
 		_cPw = _texPw.GetPixels();
 		displacementMat.SetFloat("_L", L);
 		floatDecoderMat.SetFloat("_L", L);
@@ -50,6 +47,7 @@ public class TestH : MonoBehaviour {
 		_w = new W(_k);
 		_h = new H(_h0, _w);
 		_d = new D(n, _k, _h);
+		_eta = new Eta(n, _k, _h);
 
 		_fft = new FFT(n);
 		_pu = new float[2 * n * n];
