@@ -23,7 +23,7 @@ public class TestH : MonoBehaviour {
 	private Color[] _cPw, _cEtaX, _cEtaY;
 	private float[] _pw, _etaX, _etaY;
 	private float _maxPw = 0f, _maxEtaX = 0f, _maxEtaY = 0f;
-	private RenderTexture _texUvw, _texNormal;
+	private RenderTexture _texUvw;
 
 	void Start () {
 		_texPw = new Texture2D(n, n, TextureFormat.RGBA32, false, true);
@@ -39,7 +39,6 @@ public class TestH : MonoBehaviour {
 		floatDecoderMat.SetTexture("_ZTex", _texPw);
 
 		_texUvw = new RenderTexture(n, n, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
-		_texNormal = new RenderTexture(n, n, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
 		displacementMat.mainTexture = _texUvw;
 
 		_k = new K(n, L);
